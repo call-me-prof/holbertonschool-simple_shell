@@ -1,0 +1,7 @@
+.TH SIMPLE_SHELL 1
+.SH NAME
+hsh \- simple shell
+.SH SYNOPSIS
+./hsh
+.SH DESCRIPTION
+This shell can execute basic commands.
