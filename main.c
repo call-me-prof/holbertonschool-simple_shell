@@ -1,41 +1,111 @@
 #include "shell.h"
-
+ 
 /**
- * main - entry point for simple shell
- * Return: 0
+ * tokenize - splits a string into tokens
+ * @line: the input line to split
+ *
+ * Return: array of strings (tokens), or NULL on failure
  */
-int main(void)
+char **tokenize(char *line)
 {
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t read;
 	char **args;
-
+	char *token;
+	int i;
+ 
+	i = 0;
+	args = malloc(sizeof(char *) * 64);
+	if (!args)
+		return (NULL);
+ 
+	token = strtok(line, " \t\n");
+	while (token != NULL)
+	{
+		args[i] = token;
+		i++;
+		token = strtok(NULL, " \t\n");
+	}
+	args[i] = NULL;
+	return (args);
+}
+ 
+/**
+ * print_env - prints the current environment variables
+ *
+ * Return: void
+ */
+void print_env(void)
+{
+	int i;
+ 
+	for (i = 0; environ[i]; i++)
+	{
+		write(STDOUT_FILENO, environ[i], strlen(environ[i]));
+		write(STDOUT_FILENO, "\n", 1);
+	}
+}
+ 
+/**
+ * main - entry point for the simple shell
+ * @argc: argument count
+ * @argv: argument vector
+ *
+ * Return: 0 on success
+ */
+int main(int argc, char **argv)
+{
+	char *line;
+	size_t len;
+	ssize_t nread;
+	char **args;
+	int last_status;
+	int count;
+ 
+	(void)argc;
+	line = NULL;
+	len = 0;
+	last_status = 0;
+	count = 0;
+ 
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, ":) ", 3);
-
-		read = getline(&line, &len, stdin);
-		if (read == -1)
+			write(STDOUT_FILENO, "$ ", 2);
+ 
+		nread = getline(&line, &len, stdin);
+		if (nread == -1)
 		{
+			if (isatty(STDIN_FILENO))
+				write(STDOUT_FILENO, "\n", 1);
 			free(line);
-			return (0);
+			exit(last_status);
 		}
-
-		line[read - 1] = '\0';
-
-		if (line[0] == '\0')
-			continue;
-
+ 
+		count++;
 		args = tokenize(line);
-		if (!args)
+		if (args == NULL || args[0] == NULL)
+		{
+			free(args);
 			continue;
-
-		execute(args);
+		}
+ 
+		if (strcmp(args[0], "exit") == 0)
+		{
+			free(args);
+			free(line);
+			exit(last_status);
+		}
+ 
+		if (strcmp(args[0], "env") == 0)
+		{
+			print_env();
+			free(args);
+			continue;
+		}
+ 
+		last_status = execute(args, argv[0], count);
 		free(args);
 	}
-
+ 
 	free(line);
 	return (0);
 }

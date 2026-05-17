@@ -7,11 +7,19 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
  
 extern char **environ;
  
-char *find_path(char *cmd);
-char **tokenize(char *line);
-void execute(char **args);
+/* main.c */
+char	**tokenize(char *line);
+void	print_env(void);
  
-#endif
+/* execute.c */
+int	execute(char **args, char *prog, int count);
+ 
+/* path.c */
+char	*_getenv(char *name);
+char	*find_in_path(char *cmd);
+ 
+#endif /* SHELL_H */
