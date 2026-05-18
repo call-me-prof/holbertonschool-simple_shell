@@ -1,7 +1,45 @@
-.TH SIMPLE_SHELL 1
+.TH SIMPLE_SHELL 1 "May 2026" "Holberton School" "Simple Shell Man Page"
 .SH NAME
-hsh \- simple shell
+hsh \- simple UNIX command line interpreter
 .SH SYNOPSIS
-./hsh
+.B hsh
+[\fIfilename\fR]
 .SH DESCRIPTION
-This shell can execute basic commands.
+.B hsh
+is a simple UNIX command line interpreter (shell) written in C.
+It reads commands from standard input in interactive or non-interactive mode,
+parses them, and executes them using the execve system call.
+.SH INTERACTIVE MODE
+The shell displays a prompt
+.B ($)
+and waits for the user to type a command, then executes it.
+.PP
+.RS
+$ ./hsh
+.br
+($) /bin/ls
+.br
+hsh main.c shell.h
+.br
+($) exit
+.RE
+.SH NON-INTERACTIVE MODE
+Commands can be piped into the shell:
+.PP
+.RS
+$ echo "/bin/ls" | ./hsh
+.RE
+.SH BUILTINS
+.TP
+.B exit
+Exit the shell with status 0.
+.TP
+.B env
+Print the current environment variables.
+.SH RETURN VALUE
+Returns 0 on success, or an error code if a command is not found.
+.SH AUTHORS
+Faisal Alshahrani
+Dhay Aldhwayan
+.SH SEE ALSO
+sh(1), bash(1), execve(2), fork(2)
