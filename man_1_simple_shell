@@ -1,45 +1,132 @@
-.TH SIMPLE_SHELL 1 "May 2026" "Holberton School" "Simple Shell Man Page"
+.TH HSH 1 "May 2026" "Holberton School" "Simple Shell Manual"
+
 .SH NAME
-hsh \- simple UNIX command line interpreter
+.B hsh
+\- a simple UNIX command line interpreter
+
 .SH SYNOPSIS
 .B hsh
-[\fIfilename\fR]
+.RI [ command ]
+.RI [ arguments ]
+
 .SH DESCRIPTION
 .B hsh
-is a simple UNIX command line interpreter (shell) written in C.
-It reads commands from standard input in interactive or non-interactive mode,
-parses them, and executes them using the execve system call.
-.SH INTERACTIVE MODE
-The shell displays a prompt
-.B ($)
-and waits for the user to type a command, then executes it.
-.PP
+is a simple UNIX shell written in C as part of the Holberton School
+curriculum. It reads commands from standard input and executes them.
+It supports both interactive and non-interactive modes.
+
+In
+.B interactive mode,
+the shell displays a prompt
+.RB ( "$ " )
+and waits for the user to type a command.
+
+In
+.B non-interactive mode,
+commands are read from a pipe or a file without displaying a prompt.
+
+.SH INVOCATION
+.TP
+.B Interactive mode:
 .RS
+.nf
 $ ./hsh
-.br
-($) /bin/ls
-.br
-hsh main.c shell.h
-.br
-($) exit
+$ /bin/ls
+$ exit
+.fi
 .RE
-.SH NON-INTERACTIVE MODE
-Commands can be piped into the shell:
-.PP
+
+.TP
+.B Non-interactive mode:
 .RS
-$ echo "/bin/ls" | ./hsh
+.nf
+echo "/bin/ls" | ./hsh
+.fi
 .RE
+
 .SH BUILTINS
+
 .TP
 .B exit
-Exit the shell with status 0.
+Exits the shell. The exit status is the status of the last command executed.
+No argument handling is required.
+
 .TP
 .B env
-Print the current environment variables.
-.SH RETURN VALUE
-Returns 0 on success, or an error code if a command is not found.
-.SH AUTHORS
-Faisal Alshahrani
-Dhay Aldhwayan
+Prints all current environment variables, one per line, in the format
+.IR NAME=value .
+
+.SH PATH
+When a command is entered without a full path, the shell searches for it
+in each directory listed in the
+.B PATH
+environment variable, separated by colons.
+
+If the command contains a
+.BR / ,
+it is used directly and PATH is not searched.
+
+If the command is not found,
+.B fork
+is never called, and an error message is printed to standard error.
+
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 127
+Command not found.
+.TP
+.B 1
+General error (fork failure or execution error).
+
+.SH EXAMPLES
+Execute a command with full path:
+.RS
+.nf
+$ /bin/ls -l
+.fi
+.RE
+
+Execute a command using PATH:
+.RS
+.nf
+$ ls -la
+.fi
+.RE
+
+Print environment variables:
+.RS
+.nf
+$ env
+.fi
+.RE
+
+Exit the shell:
+.RS
+.nf
+$ exit
+.fi
+.RE
+
+.SH COMPILATION
+.nf
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+.fi
+
 .SH SEE ALSO
-sh(1), bash(1), execve(2), fork(2)
+.BR sh (1),
+.BR bash (1),
+.BR execve (2),
+.BR fork (2),
+.BR waitpid (2),
+.BR getline (3)
+
+.SH BUGS
+No known bugs.
+
+.SH AUTHORS
+Dhay Aldhwayan<dhay.aldhuwayan@gmail.com>
+.br
+Faisal Alshahrani<OpFaisal4@hotmail.com>
